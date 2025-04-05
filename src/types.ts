@@ -88,3 +88,28 @@ export interface ObjectMetaDetail extends ObjectMeta {
     /** 字段列表 */
     fieldList: Field[];
 }
+
+export interface SysRecord {
+    code: string;
+    name: string;
+    metaName: string;
+    createdOn: number;
+    updatedOn: number;
+}
+
+export interface BizRecord extends SysRecord {
+    [key: string]: unknown;
+}
+
+export interface QueryOptions {
+    selectFields: string[];
+    pageNo: number;
+    pageSize: number;
+    query: Record<string, string | number>;
+}
+
+export interface QueryResult {
+    totalCount: number;
+    metaName: string;
+    records: BizRecord[];
+}

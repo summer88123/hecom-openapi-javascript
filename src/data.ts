@@ -1,38 +1,33 @@
-import { BizRecord, Config, ObjectMeta, ObjectMetaDetail, QueryOptions, QueryResult } from './types';
+import { BizRecord, QueryOptions, QueryResult } from './types';
 import { AuthService } from './auth';
-import { ObjectService } from './object';
-import { DataService } from './data';
 
-export default class HClient {
+export class DataService {
     private authService: AuthService;
-    private objectService: ObjectService;
-    private dataService: DataService;
+    private pageSize: number = 10;
 
-    config = {
-        pageSize: 10,
-    };
-
-    constructor(config: Config) {
-        this.authService = new AuthService(config);
-        this.objectService = new ObjectService(this.authService);
-        this.dataService = new DataService(this.authService);
+    constructor(authService: AuthService) {
+        this.authService = authService;
     }
 
-    /**
-     * 获取业务对象列表
-     * @returns ObjectMeta[]
-     */
-    public async getObjects(): Promise<ObjectMeta[]> {
-        return this.objectService.getObjects();
+    private async request<R, P = void>(method: string, url: string, param?: P): Promise<R> {
+        return this.authService.request(method, url, param);
     }
 
-    /**
-     * 获取业务对象描述
-     * @param metaName 业务对象api名称
-     * @returns ObjectMetaDetail
-     */
-    public async getObjectDescription(metaName: string): Promise<ObjectMetaDetail> {
-        return this.objectService.getObjectDescription(metaName);
+    private buildQueryUrl(
+        metaName: string,
+        { selectFields, pageNo, pageSize, query }: QueryOptions,
+        basePath: string = '/v1/data/objects'
+    ): string {
+        const queryStr = query
+            ? Object.keys(query).reduce((pre, cur) => {
+                  return `&${pre}${cur}=${query[cur]}`;
+              }, '')
+            : '';
+        const selectFieldsStr =
+            Array.isArray(selectFields) && selectFields.length > 0 ? selectFields.join(',') : 'code,name';
+        const pageNoStr = pageNo ? pageNo : 1;
+        const pageSizeStr = pageSize ? pageSize : this.pageSize;
+        return `${basePath}/${metaName}?selectFields=${selectFieldsStr}&pageNo=${pageNoStr}&pageSize=${pageSizeStr}${queryStr}`;
     }
 
     /**
@@ -42,7 +37,7 @@ export default class HClient {
      * @returns 创建的业务数据code
      */
     public async createData(metaName: string, data: BizRecord): Promise<string> {
-        return this.dataService.createData(metaName, data);
+        return this.request('POST', `/v1/data/objects/${metaName}`, data);
     }
 
     /**
@@ -54,7 +49,7 @@ export default class HClient {
      * @throws Error 更新业务数据失败
      */
     public async updateData(metaName: string, code: string, data: BizRecord): Promise<string> {
-        return this.dataService.updateData(metaName, code, data);
+        return this.request('PATCH', `/v1/data/objects/${metaName}/${code}`, data);
     }
 
     /**
@@ -64,7 +59,13 @@ export default class HClient {
      * @returns 创建的业务数据code数组
      */
     public async batchCreateData(metaName: string, records: BizRecord[]): Promise<string[]> {
-        return this.dataService.batchCreateData(metaName, records);
+        if (records.length > 30) {
+            throw new Error('批量新增业务数据最多30条');
+        }
+        if (records.length === 0) {
+            throw new Error('批量新增业务数据不能为空');
+        }
+        return this.request('POST', `/oapi/v1/data/objects/${metaName}/batch`, { records });
     }
 
     /**
@@ -74,7 +75,7 @@ export default class HClient {
      * @returns 删除的业务数据code
      */
     public async deleteData(metaName: string, code: string): Promise<string> {
-        return this.dataService.deleteData(metaName, code);
+        return this.request('DELETE', `/v1/data/objects/${metaName}/${code}`);
     }
 
     /**
@@ -84,7 +85,16 @@ export default class HClient {
      * @returns 更新的业务数据code数组
      */
     public async batchUpdateData(metaName: string, records: BizRecord[]): Promise<string[]> {
-        return this.dataService.batchUpdateData(metaName, records);
+        if (records.length > 30) {
+            throw new Error('批量更新业务数据最多30条');
+        }
+        if (records.length === 0) {
+            throw new Error('批量更新业务数据不能为空');
+        }
+        if (records.some(record => !record.code)) {
+            throw new Error('批量更新业务数据必须包含code字段');
+        }
+        return this.request('PATCH', `/oapi/v1/data/objects/${metaName}/batch`, { records });
     }
 
     /**
@@ -94,20 +104,18 @@ export default class HClient {
      * @returns 业务数据
      */
     public async getData(metaName: string, code: string): Promise<BizRecord> {
-        return this.dataService.getData(metaName, code);
+        return this.request('GET', `/v1/data/objects/${metaName}/${code}`);
     }
 
     /**
      * 查询业务数据
      * @param metaName 业务对象api名称
-     * @param selectFields 要查询的字段列表
-     * @param pageNo 页码，从1开始，不传则默认为1
-     * @param pageSize 每页大小，不传则默认为10
-     * @param query 查询条件，格式为 {fieldName: value}
+     * @param options 查询选项
      * @returns 业务数据列表
      */
     public async queryData(metaName: string, options: QueryOptions): Promise<QueryResult> {
-        return this.dataService.queryData(metaName, options);
+        const url = this.buildQueryUrl(metaName, options);
+        return this.request('GET', url);
     }
 
     /**
@@ -116,20 +124,21 @@ export default class HClient {
      * @returns 业务数据列表
      */
     public async queryDataBySQL(sql: string) {
-        return this.dataService.queryDataBySQL(sql);
+        const encodedSql = encodeURIComponent(sql);
+        const url = `/v1/data/query?sql=${encodedSql}`;
+
+        return this.request('GET', url);
     }
 
     /**
      * 查询辅助或内置对象业务数据
      * @param metaName 业务对象api名称
-     * @param selectFields 要查询的字段列表
-     * @param pageNo 页码，从1开始，不传则默认为1
-     * @param pageSize 每页大小，不传则默认为10
-     * @param query 查询条件，格式为 {fieldName: value}
+     * @param options 查询选项
      * @returns 业务数据列表
      */
     public async queryAuxiliaryData(metaName: string, options: QueryOptions): Promise<QueryResult> {
-        return this.dataService.queryAuxiliaryData(metaName, options);
+        const url = this.buildQueryUrl(metaName, options, '/v1/data/objects/listAuxiliaryBizData');
+        return this.request('GET', url);
     }
 
     /**
@@ -148,6 +157,16 @@ export default class HClient {
         addTeam: boolean,
         deptFollowNewOwner: boolean
     ): Promise<string> {
-        return this.dataService.transferOwner(metaName, code, newOwner, addTeam, deptFollowNewOwner);
+        if (!code) {
+            throw new Error('数据code不能为空');
+        }
+        if (!newOwner) {
+            throw new Error('新负责人code不能为空');
+        }
+        return this.request('PATCH', `/oapi/v1/data/${metaName}/${code}/tansferOwner`, {
+            newOwner,
+            addTeam: addTeam ? 1 : 0,
+            deptFollowNewOwner: deptFollowNewOwner ? 1 : 0,
+        });
     }
 }

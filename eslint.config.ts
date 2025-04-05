@@ -1,5 +1,4 @@
 import eslint from '@eslint/js';
-import type { Linter } from 'eslint';
 import eslintConfigPrettier from 'eslint-config-prettier';
 import prettier from 'eslint-plugin-prettier';
 import globals from 'globals';
@@ -26,6 +25,7 @@ export default [
         },
         rules: {
             'prettier/prettier': 'error',
+            'no-explicit-any': 'off',
         },
     },
-] satisfies Linter.Config[];
+];
