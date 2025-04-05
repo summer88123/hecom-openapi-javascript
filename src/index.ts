@@ -1,12 +1,29 @@
-import { BizRecord, Config, ObjectMeta, ObjectMetaDetail, QueryOptions, QueryResult } from './types';
+import {
+    BizRecord,
+    Config,
+    ObjectMeta,
+    ObjectMetaDetail,
+    QueryOptions,
+    QueryResult,
+    ConstantGroup,
+    ConstantOption,
+} from './types';
 import { AuthService } from './auth';
 import { ObjectService } from './object';
 import { DataService } from './data';
+import { UserService } from './user';
+import { DeptService } from './dept';
+import { RoleService } from './role';
+import { ConstantGroupService } from './constantgroup';
 
 export default class HClient {
     private authService: AuthService;
     private objectService: ObjectService;
     private dataService: DataService;
+    private userService: UserService;
+    private deptService: DeptService;
+    private roleService: RoleService;
+    private constantGroupService: ConstantGroupService;
 
     config = {
         pageSize: 10,
@@ -16,6 +33,10 @@ export default class HClient {
         this.authService = new AuthService(config);
         this.objectService = new ObjectService(this.authService);
         this.dataService = new DataService(this.authService);
+        this.userService = new UserService(this.authService);
+        this.deptService = new DeptService(this.authService);
+        this.roleService = new RoleService(this.authService);
+        this.constantGroupService = new ConstantGroupService(this.authService);
     }
 
     /**
@@ -149,5 +170,158 @@ export default class HClient {
         deptFollowNewOwner: boolean
     ): Promise<string> {
         return this.dataService.transferOwner(metaName, code, newOwner, addTeam, deptFollowNewOwner);
+    }
+
+    /**
+     * 获取用户对象描述
+     * @returns 用户对象描述信息
+     */
+    public async getUserDescription(): Promise<ObjectMetaDetail> {
+        return this.userService.getUserDescription();
+    }
+
+    /**
+     * 新建用户
+     * @param userData 用户数据
+     * @returns 用户code
+     */
+    public async createUser(userData: BizRecord): Promise<string> {
+        return this.userService.createUser(userData);
+    }
+
+    /**
+     * 修改用户数据
+     * @param code 用户code
+     * @param userData 用户数据
+     * @returns 用户code
+     */
+    public async updateUser(code: string, userData: BizRecord): Promise<string> {
+        return this.userService.updateUser(code, userData);
+    }
+
+    /**
+     * 获取用户详情
+     * @param code 用户code
+     * @returns 用户详情
+     */
+    public async getUserDetail(code: string): Promise<BizRecord> {
+        return this.userService.getUserDetail(code);
+    }
+
+    /**
+     * 获取组织对象描述
+     * @returns 组织对象描述信息
+     */
+    public async getDeptDescription(): Promise<ObjectMetaDetail> {
+        return this.deptService.getDeptDescription();
+    }
+
+    /**
+     * 新建组织
+     * @param deptData 组织数据
+     * @returns 组织code
+     */
+    public async createDept(deptData: BizRecord): Promise<string> {
+        return this.deptService.createDept(deptData);
+    }
+
+    /**
+     * 修改组织信息
+     * @param code 组织code
+     * @param deptData 组织数据
+     * @returns 组织code
+     */
+    public async updateDept(code: string, deptData: BizRecord): Promise<string> {
+        return this.deptService.updateDept(code, deptData);
+    }
+
+    /**
+     * 获取组织详情
+     * @param code 组织code
+     * @returns 组织详情
+     */
+    public async getDeptDetail(code: string): Promise<BizRecord> {
+        return this.deptService.getDeptDetail(code);
+    }
+
+    /**
+     * 获取角色对象描述
+     * @returns 角色对象描述信息
+     */
+    public async getRoleDescription(): Promise<ObjectMetaDetail> {
+        return this.roleService.getRoleDescription();
+    }
+
+    /**
+     * 新建角色
+     * @param roleData 角色数据
+     * @returns 角色code
+     */
+    public async createRole(roleData: BizRecord): Promise<string> {
+        return this.roleService.createRole(roleData);
+    }
+
+    /**
+     * 修改角色信息
+     * @param code 角色code
+     * @param roleData 角色数据
+     * @returns 角色code
+     */
+    public async updateRole(code: string, roleData: BizRecord): Promise<string> {
+        return this.roleService.updateRole(code, roleData);
+    }
+
+    /**
+     * 获取角色详情
+     * @param code 角色code
+     * @returns 角色详情
+     */
+    public async getRoleDetail(code: string): Promise<BizRecord> {
+        return this.roleService.getRoleDetail(code);
+    }
+
+    /**
+     * 获取选项值集列表
+     * @returns ConstantGroup[]
+     */
+    public async getConstantGroups(): Promise<ConstantGroup[]> {
+        return this.constantGroupService.getConstantGroups();
+    }
+
+    /**
+     * 获取选项值集选项列表
+     * @param groupName 选项值集名称
+     * @returns ConstantOption[]
+     */
+    public async getConstantOptions(groupName: string): Promise<ConstantOption[]> {
+        return this.constantGroupService.getConstantOptions(groupName);
+    }
+
+    /**
+     * 新增选项
+     * @param groupName 选项值集名称
+     * @param name 选项name
+     * @param label 选项标签
+     * @param parentName 上级选项name
+     * @returns ConstantOption
+     */
+    public async createConstantOption(
+        groupName: string,
+        name: string,
+        label: string,
+        parentName?: string
+    ): Promise<ConstantOption> {
+        return this.constantGroupService.createConstantOption(groupName, name, label, parentName);
+    }
+
+    /**
+     * 修改选项
+     * @param groupName 选项值集名称
+     * @param optionName 选项name
+     * @param label 选项标签
+     * @returns ConstantOption
+     */
+    public async updateConstantOption(groupName: string, optionName: string, label: string): Promise<ConstantOption> {
+        return this.constantGroupService.updateConstantOption(groupName, optionName, label);
     }
 }

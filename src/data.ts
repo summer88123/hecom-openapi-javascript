@@ -1,9 +1,9 @@
 import { BizRecord, QueryOptions, QueryResult } from './types';
 import { AuthService } from './auth';
+import { buildQueryUrl } from './util';
 
 export class DataService {
     private authService: AuthService;
-    private pageSize: number = 10;
 
     constructor(authService: AuthService) {
         this.authService = authService;
@@ -11,23 +11,6 @@ export class DataService {
 
     private async request<R, P = void>(method: string, url: string, param?: P): Promise<R> {
         return this.authService.request(method, url, param);
-    }
-
-    private buildQueryUrl(
-        metaName: string,
-        { selectFields, pageNo, pageSize, query }: QueryOptions,
-        basePath: string = '/v1/data/objects'
-    ): string {
-        const queryStr = query
-            ? Object.keys(query).reduce((pre, cur) => {
-                  return `&${pre}${cur}=${query[cur]}`;
-              }, '')
-            : '';
-        const selectFieldsStr =
-            Array.isArray(selectFields) && selectFields.length > 0 ? selectFields.join(',') : 'code,name';
-        const pageNoStr = pageNo ? pageNo : 1;
-        const pageSizeStr = pageSize ? pageSize : this.pageSize;
-        return `${basePath}/${metaName}?selectFields=${selectFieldsStr}&pageNo=${pageNoStr}&pageSize=${pageSizeStr}${queryStr}`;
     }
 
     /**
@@ -114,7 +97,7 @@ export class DataService {
      * @returns 业务数据列表
      */
     public async queryData(metaName: string, options: QueryOptions): Promise<QueryResult> {
-        const url = this.buildQueryUrl(metaName, options);
+        const url = buildQueryUrl(metaName, options);
         return this.request('GET', url);
     }
 
@@ -137,7 +120,7 @@ export class DataService {
      * @returns 业务数据列表
      */
     public async queryAuxiliaryData(metaName: string, options: QueryOptions): Promise<QueryResult> {
-        const url = this.buildQueryUrl(metaName, options, '/v1/data/objects/listAuxiliaryBizData');
+        const url = buildQueryUrl(metaName, options, '/v1/data/objects/listAuxiliaryBizData');
         return this.request('GET', url);
     }
 

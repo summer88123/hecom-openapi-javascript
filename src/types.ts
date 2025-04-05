@@ -90,9 +90,12 @@ export interface ObjectMetaDetail extends ObjectMeta {
 }
 
 export interface SysRecord {
+    id: number;
     code: string;
     name: string;
+    entCode: string;
     metaName: string;
+    status: number;
     createdOn: number;
     updatedOn: number;
 }
@@ -112,4 +115,15 @@ export interface QueryResult {
     totalCount: number;
     metaName: string;
     records: BizRecord[];
+}
+export interface ConstantGroup extends SysRecord {
+    cascade: number;
+    description: string;
+    label: string;
+}
+export interface ConstantOption extends SysRecord {
+    children: ConstantOption[];
+    groupName: string;
+    label: string;
+    pinyin: string;
 }
