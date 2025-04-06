@@ -8,6 +8,7 @@ import {
     ConstantGroup,
     ConstantOption,
 } from './types';
+import { HecomError, NetHecomError, BizHecomError } from './error';
 import { AuthService } from './auth';
 import { ObjectService } from './object';
 import { DataService } from './data';
@@ -325,3 +326,5 @@ export default class HClient {
         return this.constantGroupService.updateConstantOption(groupName, optionName, label);
     }
 }
+
+export { HecomError, NetHecomError, BizHecomError };

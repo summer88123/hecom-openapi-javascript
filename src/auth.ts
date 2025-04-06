@@ -1,6 +1,7 @@
 import { Config } from './types';
 import axios from 'axios';
 import BASE64 from 'base-64';
+import { BizHecomError, NetHecomError } from './error';
 
 export class AuthService {
     private authConfig: Config;
@@ -39,13 +40,13 @@ export class AuthService {
 
         const data = this.accessToken
             ? {
-                  grant_type: 'refresh_token',
-                  refresh_token: this.refreshToken || this.accessToken,
-              }
+                grant_type: 'refresh_token',
+                refresh_token: this.refreshToken || this.accessToken,
+            }
             : {
-                  grant_type: 'client_credentials',
-                  username: this.authConfig.username,
-              };
+                grant_type: 'client_credentials',
+                username: this.authConfig.username,
+            };
 
         const response = await axios.post(authUrl, data, {
             headers: {
@@ -72,19 +73,27 @@ export class AuthService {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
         };
+        try {
+            const { data } = await axios.request({
+                method,
+                url,
+                data: param,
+                headers,
+                baseURL: this.getEndPoint(),
+            });
 
-        const { data } = await axios.request({
-            method,
-            url,
-            data: param,
-            headers,
-            baseURL: this.getEndPoint(),
-        });
-
-        if (data.result === '0') {
-            return data.data;
-        } else {
-            throw new Error(data.desc);
+            if (data.result === '0') {
+                return data.data;
+            } else {
+                throw new BizHecomError(data.desc, data);
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                const err = error as any;
+                throw new NetHecomError(err.response.data.desc, err.response.data.code, url);
+            } else {
+                throw error;
+            }
         }
     }
 }
