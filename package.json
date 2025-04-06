@@ -8,7 +8,7 @@
     "hecom": "./dist/index.js"
   },
   "files": [
-    "dist"
+    "src"
   ],
   "main": "./src/index.ts",
   "types": "./src/index.ts",
