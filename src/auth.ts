@@ -26,7 +26,7 @@ export class AuthService {
             throw new Error('username不能为空');
         }
         if (!config.apiHost) {
-            config.apiHost = 'tc.cloud.hecom.cn';
+            config.apiHost = 'https://tc.cloud.hecom.cn';
         }
     }
 
@@ -40,14 +40,14 @@ export class AuthService {
 
         const data = this.accessToken
             ? {
-                grant_type: 'refresh_token',
-                refresh_token: this.refreshToken || this.accessToken,
-            }
+                  grant_type: 'refresh_token',
+                  refresh_token: this.refreshToken || this.accessToken,
+              }
             : {
-                grant_type: 'client_credentials',
-                username: this.authConfig.username,
-            };
-
+                  grant_type: 'client_credentials',
+                  username: this.authConfig.username,
+              };
+        console.log(authUrl);
         const response = await axios.post(authUrl, data, {
             headers: {
                 'Content-Type': 'application/json',
