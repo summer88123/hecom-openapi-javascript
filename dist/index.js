@@ -26,7 +26,7 @@ class q {
       throw new Error("clientId和clientSecret不能为空");
     if (!e.username)
       throw new Error("username不能为空");
-    e.apiHost || (e.apiHost = "tc.cloud.hecom.cn");
+    e.apiHost || (e.apiHost = "https://tc.cloud.hecom.cn");
   }
   async getAccessToken() {
     if (this.accessToken && Date.now() < this.expiresIn)
@@ -37,7 +37,9 @@ class q {
     } : {
       grant_type: "client_credentials",
       username: this.authConfig.username
-    }, s = await u.post(e, r, {
+    };
+    console.log(e);
+    const s = await u.post(e, r, {
       headers: {
         "Content-Type": "application/json",
         Authorization: t
@@ -95,7 +97,7 @@ class D {
    * @returns ObjectMetaDetail
    */
   async getObjectDescription(e) {
-    return this.request("GET", `/oapi/v1/data/objects/${e}/description`);
+    return this.request("GET", `/v1/data/objects/${e}/description`);
   }
 }
 function i(a, e) {
