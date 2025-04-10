@@ -26,6 +26,6 @@ export class ObjectService {
      * @returns ObjectMetaDetail
      */
     public async getObjectDescription(metaName: string): Promise<ObjectMetaDetail> {
-        return this.request('GET', `/oapi/v1/data/objects/${metaName}/description`);
+        return this.request('GET', `/v1/data/objects/${metaName}/description`);
     }
 }
