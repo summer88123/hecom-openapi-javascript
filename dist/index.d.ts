@@ -4,11 +4,11 @@ export declare class BizHecomError extends HecomError {
     constructor(message: string, code: string, data?: any);
 }
 
-declare interface BizRecord extends SysRecord {
+export declare interface BizRecord extends SysRecord {
     [key: string]: unknown;
 }
 
-declare interface BizType {
+export declare interface BizType {
     /** 类型唯一id */
     code: number;
     /** 类型描述 */
@@ -21,7 +21,7 @@ declare interface BizType {
     name: string;
 }
 
-declare interface Config {
+export declare interface Config {
     /** 客户端ID */
     clientId: string;
     /** 客户端密钥 */
@@ -32,20 +32,20 @@ declare interface Config {
     username: string;
 }
 
-declare interface ConstantGroup extends SysRecord {
+export declare interface ConstantGroup extends SysRecord {
     cascade: number;
     description: string;
     label: string;
 }
 
-declare interface ConstantOption extends SysRecord {
+export declare interface ConstantOption extends SysRecord {
     children: ConstantOption[];
     groupName: string;
     label: string;
     pinyin: string;
 }
 
-declare interface Field {
+export declare interface Field {
     /** 字段扩展属性集 */
     attributes: {
         /** 文本填写提示 */
@@ -297,7 +297,7 @@ export declare class NetHecomError extends HecomError {
     constructor(message: string, statusCode: number, url: string);
 }
 
-declare interface ObjectMeta {
+export declare interface ObjectMeta {
     /** 业务对象中文名称 */
     label: string;
     /** 业务对象api名称 */
@@ -310,27 +310,39 @@ declare interface ObjectMeta {
     std: 0 | 1;
 }
 
-declare interface ObjectMetaDetail extends ObjectMeta {
+export declare interface ObjectMetaDetail extends ObjectMeta {
     /** 业务类型 */
     bizTypes: BizType[];
     /** 字段列表 */
     fieldList: Field[];
 }
 
-declare interface QueryOptions {
+export declare interface QueryOptions {
     selectFields: string[];
     pageNo: number;
     pageSize: number;
     query: Record<string, string | number>;
 }
 
-declare interface QueryResult {
+export declare interface QueryResult {
     totalCount: number;
     metaName: string;
     records: BizRecord[];
 }
 
-declare interface SysRecord {
+declare interface Response_2<D> {
+    /** 响应数据 */
+    data: D;
+    /** 响应描述 */
+    desc: string;
+    /** 响应结果 */
+    result: string;
+    /** 响应时间 */
+    time: number;
+}
+export { Response_2 as Response }
+
+export declare interface SysRecord {
     id: number;
     code: string;
     name: string;

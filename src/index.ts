@@ -326,5 +326,5 @@ export default class HClient {
         return this.constantGroupService.updateConstantOption(groupName, optionName, label);
     }
 }
-
+export * from './types';
 export { HecomError, NetHecomError, BizHecomError };
