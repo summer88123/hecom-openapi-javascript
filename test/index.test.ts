@@ -10,7 +10,8 @@ describe('client test', () => {
             apiHost: 'https://tc-dev.cloud.hecom.cn',
         });
         const objs = await client.getObjects();
-        console.log(objs);
+        console.log(objs.filter(o => o.label.length > 10).length);
+        console.log(objs.length);
         expect(objs).toBeDefined();
     });
 });
