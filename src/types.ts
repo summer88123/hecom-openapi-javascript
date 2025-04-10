@@ -4,7 +4,7 @@ export interface Config {
     /** 客户端密钥 */
     clientSecret: string;
     /** API主机地址 */
-    apiHost: string;
+    apiHost?: string;
     /** 用户名 */
     username: string;
 }
