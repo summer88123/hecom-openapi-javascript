@@ -137,7 +137,7 @@ export default class HClient {
      * @param sql 查询语句，支持where、order by、limit、offset等
      * @returns 业务数据列表
      */
-    public async queryDataBySQL(sql: string) {
+    public async queryDataBySQL(sql: string): Promise<QueryResult> {
         return this.dataService.queryDataBySQL(sql);
     }
 

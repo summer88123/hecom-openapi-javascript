@@ -106,7 +106,7 @@ export class DataService {
      * @param sql 查询语句，支持where、order by、limit、offset等
      * @returns 业务数据列表
      */
-    public async queryDataBySQL(sql: string) {
+    public async queryDataBySQL(sql: string): Promise<QueryResult> {
         const encodedSql = encodeURIComponent(sql);
         const url = `/v1/data/query?sql=${encodedSql}`;
 

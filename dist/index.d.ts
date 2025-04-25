@@ -163,7 +163,7 @@ declare class HClient {
      * @param sql 查询语句，支持where、order by、limit、offset等
      * @returns 业务数据列表
      */
-    queryDataBySQL(sql: string): Promise<unknown>;
+    queryDataBySQL(sql: string): Promise<QueryResult>;
     /**
      * 查询辅助或内置对象业务数据
      * @param metaName 业务对象api名称
