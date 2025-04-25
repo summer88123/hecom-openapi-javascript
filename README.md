@@ -15,10 +15,10 @@ import HClient from 'hecom-openapi-javascript';
 
 // 创建客户端实例
 const client = new HClient({
-    clientId: 'your-client-id',        // 必填，客户端ID
+    clientId: 'your-client-id', // 必填，客户端ID
     clientSecret: 'your-client-secret', // 必填，客户端密钥
-    username: 'your-username',          // 必填，用户名
-    apiHost: 'https://tc.cloud.hecom.cn' // 可选，API主机地址，默认为 https://tc.cloud.hecom.cn
+    username: 'your-username', // 必填，用户名
+    apiHost: 'https://tc.cloud.hecom.cn', // 可选，API主机地址，默认为 https://tc.cloud.hecom.cn
 });
 ```
 
@@ -85,27 +85,29 @@ const client = new HClient({
 ## 类型定义
 
 ### QueryOptions
+
 ```typescript
 interface QueryOptions {
-    selectFields: string[];    // 查询字段列表
-    pageNo: number;           // 页码，从1开始
-    pageSize: number;         // 每页记录数
+    selectFields: string[]; // 查询字段列表
+    pageNo: number; // 页码，从1开始
+    pageSize: number; // 每页记录数
     query: Record<string, string | number>; // 查询条件
 }
 ```
 
 ### BizRecord
+
 ```typescript
 interface BizRecord {
-    id: number;              // 记录ID
-    code: string;            // 记录编码
-    name: string;            // 记录名称
-    entCode: string;         // 企业编码
-    metaName: string;        // 对象API名称
-    status: number;          // 状态
-    createdOn: number;       // 创建时间
-    updatedOn: number;       // 更新时间
-    [key: string]: unknown;  // 其他业务字段
+    id: number; // 记录ID
+    code: string; // 记录编码
+    name: string; // 记录名称
+    entCode: string; // 企业编码
+    metaName: string; // 对象API名称
+    status: number; // 状态
+    createdOn: number; // 创建时间
+    updatedOn: number; // 更新时间
+    [key: string]: unknown; // 其他业务字段
 }
 ```
 
@@ -127,6 +129,37 @@ try {
         // 处理网络错误
     }
 }
+```
+
+## 测试
+
+本项目使用 vitest 进行单元测试。
+
+### 配置测试环境
+
+1. 在项目根目录创建 `.env` 文件，添加以下必要参数：
+
+```bash
+HECOM_CLIENT_ID=你的客户端ID
+HECOM_CLIENT_SECRET=你的客户端密钥
+HECOM_USERNAME=你的用户名
+HECOM_API_HOST=https://tc.cloud.hecom.cn
+```
+
+2. 确保所有参数已正确填写，缺少任何必要参数都会导致测试失败。
+
+### 运行测试
+
+执行以下命令运行单元测试：
+
+```bash
+npm test
+```
+
+如需在开发过程中监控文件变化并自动运行测试，可使用：
+
+```bash
+npm run test:watch
 ```
 
 ## 许可证

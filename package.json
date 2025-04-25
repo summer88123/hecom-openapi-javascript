@@ -20,6 +20,7 @@
         "@types/base-64": "^1.0.2",
         "@types/jsdom": "^21.1.7",
         "@types/node": "^22.13.5",
+        "dotenv": "^16.5.0",
         "eslint": "^9.21.0",
         "eslint-config-prettier": "^10.0.1",
         "eslint-plugin-prettier": "^5.2.3",

@@ -1,13 +1,14 @@
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, test, vi, beforeAll } from 'vitest';
 import HClient, { QueryOptions } from '../src/index';
+import { testConfig, validateConfig } from './env';
 
 describe('client', () => {
-    const client = new HClient({
-        clientId: 'hlhXFvf0n3JkMMBE',
-        clientSecret: 'Qrwke0J1hzMrurGg72Dco7HLPA3iRE8p',
-        username: '18519508327',
-        apiHost: 'https://tc-dev.cloud.hecom.cn',
+    beforeAll(() => {
+        // 确保环境变量已正确配置
+        validateConfig();
     });
+    console.log('testConfig', testConfig);
+    const client = new HClient(testConfig);
 
     test('getObjects', async () => {
         const objs = await client.getObjects();
