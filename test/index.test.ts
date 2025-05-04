@@ -18,8 +18,9 @@ describe('client', () => {
     });
 
     test('getObjectDescription', async () => {
-        const mockMetaName = 'PCLargeEquipmentACSTMDetailed';
+        const mockMetaName = 'project3X';
         const description = await client.getObjectDescription(mockMetaName);
+        console.log(JSON.stringify(description, null, 2));
         expect(description).toBeDefined();
     });
 
@@ -44,4 +45,16 @@ describe('client', () => {
         console.log(result);
         expect(result).toBeDefined();
     });
+
+    test('queryDataBySQL', async () => {
+        const sql = SQL_LIST[0];
+        const result = await client.queryDataBySQL(sql);
+        console.log(result);
+        expect(result).toBeDefined();
+    });
 });
+const SQL_LIST = [
+    `SELECT name, signingDate, contractAmount FROM conContract3X WHERE businessType = 'o1' AND signingDate >= '2025-01-01' AND signingDate < '2026-01-01'`,
+    `SELECT PCAmount, signDate, name FROM PCSTSupply LIMIT 10`,
+    `SELECT SUM(PCAmount) AS 本月商砼合同总价格 FROM PCSTSupply WHERE YEAR(signDate) = 2025 AND MONTH(signDate) = 4 AND approvalStatus = 'approved'`,
+];
