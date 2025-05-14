@@ -740,6 +740,14 @@ class m {
     return this.deptService.getDeptDetail(e);
   }
   /**
+   * 查询组织数据
+   * @param sql 查询SQL
+   * @returns 组织数据列表
+   */
+  async queryDeptsBySQL(e) {
+    return this.deptService.queryDeptsBySQL(e);
+  }
+  /**
    * 获取角色对象描述
    * @returns 角色对象描述信息
    */

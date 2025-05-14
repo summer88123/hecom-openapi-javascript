@@ -79,6 +79,8 @@ export declare interface Field {
     readable: 0 | 1;
     /** 是否可修改 */
     writeble: 0 | 1;
+    /** 是否必填 */
+    required: 0 | 1;
 }
 
 declare class HClient {
@@ -194,7 +196,7 @@ declare class HClient {
      * @param userData 用户数据
      * @returns 用户code
      */
-    createUser(userData: BizRecord): Promise<string>;
+    createUser(userData: Partial<BizRecord>): Promise<string>;
     /**
      * 修改用户数据
      * @param code 用户code
@@ -232,6 +234,12 @@ declare class HClient {
      * @returns 组织详情
      */
     getDeptDetail(code: string): Promise<BizRecord>;
+    /**
+     * 查询组织数据
+     * @param sql 查询SQL
+     * @returns 组织数据列表
+     */
+    queryDeptsBySQL(sql: string): Promise<QueryResult>;
     /**
      * 获取角色对象描述
      * @returns 角色对象描述信息
