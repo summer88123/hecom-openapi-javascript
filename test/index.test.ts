@@ -52,6 +52,28 @@ describe('client', () => {
         console.log(result);
         expect(result).toBeDefined();
     });
+
+    test('queryUserMeta', async () => {
+        const result = await client.getUserDescription();
+        console.log(result);
+        const fields = result.fieldList.filter(f => f.required);
+        console.log(fields);
+        expect(result).toBeDefined();
+    });
+    test('queryDeptData', async () => {
+        const result = await client.queryDeptsBySQL('SELECT code, name FROM Org');
+        console.log(result);
+        expect(result).toBeDefined();
+    });
+    test('createUser', async () => {
+        const userData = {
+            name: '测试用户',
+            phone: '18519508326',
+            dept: { code: '300853640651', metaName: 'Org', name: '红圈上海分公司' },
+        };
+        const result = await client.createUser(userData);
+        console.log(result);
+    });
 });
 const SQL_LIST = [
     `SELECT name, signingDate, contractAmount FROM conContract3X WHERE businessType = 'o1' AND signingDate >= '2025-01-01' AND signingDate < '2026-01-01'`,

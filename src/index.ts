@@ -186,7 +186,7 @@ export default class HClient {
      * @param userData 用户数据
      * @returns 用户code
      */
-    public async createUser(userData: BizRecord): Promise<string> {
+    public async createUser(userData: Partial<BizRecord>): Promise<string> {
         return this.userService.createUser(userData);
     }
 
@@ -243,6 +243,15 @@ export default class HClient {
      */
     public async getDeptDetail(code: string): Promise<BizRecord> {
         return this.deptService.getDeptDetail(code);
+    }
+
+    /**
+     * 查询组织数据
+     * @param sql 查询SQL
+     * @returns 组织数据列表
+     */
+    public async queryDeptsBySQL(sql: string): Promise<QueryResult> {
+        return this.deptService.queryDeptsBySQL(sql);
     }
 
     /**

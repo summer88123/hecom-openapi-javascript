@@ -26,7 +26,7 @@ export class UserService {
      * @param userData 用户数据
      * @returns 用户code
      */
-    public async createUser(userData: BizRecord): Promise<string> {
+    public async createUser(userData: Partial<BizRecord>): Promise<string> {
         return this.request('POST', '/v1/data/app/userconfig/objects/User', userData);
     }
 

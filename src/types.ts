@@ -80,6 +80,8 @@ export interface Field {
     readable: 0 | 1;
     /** 是否可修改 */
     writeble: 0 | 1;
+    /** 是否必填 */
+    required: 0 | 1;
 }
 
 export interface ObjectMetaDetail extends ObjectMeta {
