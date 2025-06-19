@@ -2,12 +2,12 @@
     "name": "hecom-openapi",
     "private": true,
     "version": "0.0.1",
-    "module": "./dist/index.js",
+    "module": "./dist/index.mjs",
     "type": "module",
     "files": [
         "dist"
     ],
-    "main": "./dist/index.js",
+    "main": "./dist/index.mjs",
     "types": "./dist/index.d.ts",
     "scripts": {
         "build": "shx rm -rf dist && vite build",
