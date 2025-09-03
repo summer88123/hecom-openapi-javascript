@@ -63,7 +63,7 @@ export default class HClient {
      * @param data 业务数据，字段apiName: value 格式 {fieldName: 'fieldValue'}
      * @returns 创建的业务数据code
      */
-    public async createData(metaName: string, data: BizRecord): Promise<string> {
+    public async createData(metaName: string, data: Partial<BizRecord>): Promise<string> {
         return this.dataService.createData(metaName, data);
     }
 

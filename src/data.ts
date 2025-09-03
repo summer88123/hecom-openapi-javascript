@@ -1,5 +1,5 @@
-import { BizRecord, QueryOptions, QueryResult } from './types';
 import { AuthService } from './auth';
+import { BizRecord, QueryOptions, QueryResult } from './types';
 import { buildQueryUrl } from './util';
 
 export class DataService {
@@ -19,7 +19,7 @@ export class DataService {
      * @param data 业务数据，字段apiName: value 格式 {fieldName: 'fieldValue'}
      * @returns 创建的业务数据code
      */
-    public async createData(metaName: string, data: BizRecord): Promise<string> {
+    public async createData(metaName: string, data: Partial<BizRecord>): Promise<string> {
         return this.request('POST', `/v1/data/objects/${metaName}`, data);
     }
 
