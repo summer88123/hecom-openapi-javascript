@@ -112,7 +112,7 @@ declare class HClient {
      * @param data 业务数据，字段apiName: value 格式 {fieldName: 'fieldValue'}
      * @returns 创建的业务数据code
      */
-    createData(metaName: string, data: BizRecord): Promise<string>;
+    createData(metaName: string, data: Partial<BizRecord>): Promise<string>;
     /**
      * 更新业务数据
      * @param metaName 业务对象api名称
