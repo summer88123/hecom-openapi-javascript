@@ -1,5 +1,12 @@
 import { AuthService } from './auth';
-import { BizRecord, QueryOptions, QueryResult } from './types';
+import {
+    BizRecord,
+    DataWithRelatedRequest,
+    DataWithRelatedResponse,
+    QueryOptions,
+    QueryResult,
+    TreeRecordItem,
+} from './types';
 import { buildQueryUrl } from './util';
 
 export class DataService {
@@ -14,13 +21,62 @@ export class DataService {
     }
 
     /**
-     * 获取业务类型
+     * 递归计算树形数据的总数量
+     * @param items 树形数据项数组
+     * @returns 树形数据总数量
+     */
+    private countTreeRecords(items: TreeRecordItem[]): number {
+        let count = 0;
+        for (const item of items) {
+            if (item.records && Array.isArray(item.records)) {
+                count += item.records.length;
+                // 递归计算每个记录的子树形数据
+                for (const record of item.records) {
+                    if (record.treeRelateds && Array.isArray(record.treeRelateds)) {
+                        count += this.countTreeRecords(record.treeRelateds);
+                    }
+                }
+            }
+        }
+        return count;
+    }
+
+    /**
+     * 创建业务数据
      * @param metaName 业务对象api名称
      * @param data 业务数据，字段apiName: value 格式 {fieldName: 'fieldValue'}
      * @returns 创建的业务数据code
      */
     public async createData(metaName: string, data: Partial<BizRecord>): Promise<string> {
         return this.request('POST', `/v1/data/objects/${metaName}`, data);
+    }
+
+    /**
+     * 新增主子业务数据
+     * 此方法适用于同时写入带有少量子数据的单据，如果具有较多子明细数据，请按标准新建方法，主和子分别写入
+     * @param apiName 主对象api名称
+     * @param request 主子业务数据请求参数
+     * @returns 主数据和子数据的id信息
+     */
+    public async createDataWithRelated(
+        apiName: string,
+        request: DataWithRelatedRequest
+    ): Promise<DataWithRelatedResponse> {
+        // 计算关联子数据数量
+        const relatedCount = request.related ? request.related.data.length : 0;
+
+        // 计算树形子数据数量(递归)
+        const treeRelatedCount = request.treeRelated ? this.countTreeRecords(request.treeRelated.data) : 0;
+
+        // 验证总数量限制
+        const totalCount = relatedCount + treeRelatedCount;
+        if (totalCount > 29) {
+            throw new Error(
+                `关联子对象数据总数最多29条（主+子限制30条），当前关联子对象${relatedCount}条，树形子对象${treeRelatedCount}条，总计${totalCount}条`
+            );
+        }
+
+        return this.request('POST', `/oapi/v1/data/objects-with-related/${apiName}`, request);
     }
 
     /**
