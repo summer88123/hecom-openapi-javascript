@@ -45,6 +45,24 @@ export declare interface ConstantOption extends SysRecord {
     pinyin: string;
 }
 
+/** 主子业务数据请求 */
+export declare interface DataWithRelatedRequest {
+    /** 主对象数据 */
+    data: Partial<BizRecord>;
+    /** 关联子对象数据 */
+    related?: RelatedData;
+    /** 关联的树形子对象的数据 */
+    treeRelated?: TreeRelatedData;
+}
+
+/** 主子业务数据响应 */
+export declare interface DataWithRelatedResponse {
+    /** 主数据id */
+    code: string;
+    /** 子数据id列表 */
+    relatedCodes: string[];
+}
+
 export declare interface Field {
     /** 字段扩展属性集 */
     attributes: {
@@ -338,6 +356,16 @@ export declare interface QueryResult {
     records: BizRecord[];
 }
 
+/** 关联子对象数据 */
+export declare interface RelatedData {
+    /** 子对象名称 */
+    apiName: string;
+    /** 主对象在子对象中所占用的字段的名称 */
+    refFieldName: string;
+    /** 子对象数据列表，最多29条(主+子限制30条) */
+    data: BizRecord[];
+}
+
 declare interface Response_2<D> {
     /** 响应数据 */
     data: D;
@@ -359,6 +387,35 @@ export declare interface SysRecord {
     status: number;
     createdOn: number;
     updatedOn: number;
+}
+
+/** 树形子对象单条记录 */
+export declare interface TreeRecord {
+    /** 单条树形数据 */
+    record: BizRecord & {
+        /** 每个层级下的序号（1、2、3） */
+        sequence: number;
+        /** 层级（1、2、3 ......） */
+        treeGrid: number;
+    };
+    /** 树形子的下级数据 */
+    treeRelateds?: TreeRecordItem[];
+}
+
+/** 树形子数据集合 */
+export declare interface TreeRecordItem {
+    /** 树形子数据集合 */
+    records: TreeRecord[];
+}
+
+/** 关联的树形子对象数据 */
+export declare interface TreeRelatedData {
+    /** 树形子对象的ApiName */
+    apiName: string;
+    /** 主对象在树形子对象中所占用的字段的名称 */
+    refFieldName: string;
+    /** 树形子对象数据列表,最多29条（主+树形子限制30条） */
+    data: TreeRecordItem[];
 }
 
 export { }

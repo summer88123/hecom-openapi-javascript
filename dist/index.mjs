@@ -51,29 +51,29 @@ class q {
     return this.endPoint;
   }
   async request(e, t, r) {
-    const c = {
+    const n = {
       Authorization: `Bearer ${await this.getAccessToken()}`,
       "Content-Type": "application/json"
     };
     try {
       const {
-        data: n
+        data: c
       } = await u.request({
         method: e,
         url: t,
         data: r,
-        headers: c,
+        headers: n,
         baseURL: this.getEndPoint()
       });
-      if (n.result === "0")
-        return n.data;
-      throw new S(n.desc, n);
-    } catch (n) {
-      if (u.isAxiosError(n)) {
-        const o = n;
+      if (c.result === "0")
+        return c.data;
+      throw new S(c.desc, c);
+    } catch (c) {
+      if (u.isAxiosError(c)) {
+        const o = c;
         throw new v(o.response.data.desc, o.response.data.code, t);
       } else
-        throw n;
+        throw c;
     }
   }
 }
@@ -105,10 +105,10 @@ function i(a, e) {
     selectFields: t,
     pageNo: r,
     pageSize: s,
-    query: c
-  } = e, n = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : "/v1/data/objects", o = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : 10;
-  const d = c ? Object.keys(c).reduce((y, h) => `&${y}${h}=${c[h]}`, "") : "", l = Array.isArray(t) && t.length > 0 ? t.join(",") : "code,name";
-  return `${n}/${a}?selectFields=${l}&pageNo=${r || 1}&pageSize=${s || o}${d}`;
+    query: n
+  } = e, c = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : "/v1/data/objects", o = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : 10;
+  const d = n ? Object.keys(n).reduce((y, h) => `&${y}${h}=${n[h]}`, "") : "", l = Array.isArray(t) && t.length > 0 ? t.join(",") : "code,name";
+  return `${c}/${a}?selectFields=${l}&pageNo=${r || 1}&pageSize=${s || o}${d}`;
 }
 class f {
   constructor(e) {
@@ -118,13 +118,41 @@ class f {
     return this.authService.request(e, t, r);
   }
   /**
-   * 获取业务类型
+   * 递归计算树形数据的总数量
+   * @param items 树形数据项数组
+   * @returns 树形数据总数量
+   */
+  countTreeRecords(e) {
+    let t = 0;
+    for (const r of e)
+      if (r.records && Array.isArray(r.records)) {
+        t += r.records.length;
+        for (const s of r.records)
+          s.treeRelateds && Array.isArray(s.treeRelateds) && (t += this.countTreeRecords(s.treeRelateds));
+      }
+    return t;
+  }
+  /**
+   * 创建业务数据
    * @param metaName 业务对象api名称
    * @param data 业务数据，字段apiName: value 格式 {fieldName: 'fieldValue'}
    * @returns 创建的业务数据code
    */
   async createData(e, t) {
     return this.request("POST", `/v1/data/objects/${e}`, t);
+  }
+  /**
+   * 新增主子业务数据
+   * 此方法适用于同时写入带有少量子数据的单据，如果具有较多子明细数据，请按标准新建方法，主和子分别写入
+   * @param apiName 主对象api名称
+   * @param request 主子业务数据请求参数
+   * @returns 主数据和子数据的id信息
+   */
+  async createDataWithRelated(e, t) {
+    const r = t.related ? t.related.data.length : 0, s = t.treeRelated ? this.countTreeRecords(t.treeRelated.data) : 0, n = r + s;
+    if (n > 29)
+      throw new Error(`关联子对象数据总数最多29条（主+子限制30条），当前关联子对象${r}条，树形子对象${s}条，总计${n}条`);
+    return this.request("POST", `/oapi/v1/data/objects-with-related/${e}`, t);
   }
   /**
    * 更新业务数据
@@ -225,7 +253,7 @@ class f {
    * @param deptFollowNewOwner 所属部门是否和新负责人保持一致 (0 否 1 是)
    * @returns 转移后的业务数据code
    */
-  async transferOwner(e, t, r, s, c) {
+  async transferOwner(e, t, r, s, n) {
     if (!t)
       throw new Error("数据code不能为空");
     if (!r)
@@ -233,7 +261,7 @@ class f {
     return this.request("PATCH", `/oapi/v1/data/${e}/${t}/tansferOwner`, {
       newOwner: r,
       addTeam: s ? 1 : 0,
-      deptFollowNewOwner: c ? 1 : 0
+      deptFollowNewOwner: n ? 1 : 0
     });
   }
 }
@@ -672,8 +700,8 @@ class m {
    * @param deptFollowNewOwner 所属部门是否和新负责人保持一致 (0 否 1 是)
    * @returns 转移后的业务数据code
    */
-  async transferOwner(e, t, r, s, c) {
-    return this.dataService.transferOwner(e, t, r, s, c);
+  async transferOwner(e, t, r, s, n) {
+    return this.dataService.transferOwner(e, t, r, s, n);
   }
   /**
    * 获取用户对象描述
