@@ -85,19 +85,46 @@ class D {
     return this.authService.request(e, t, r);
   }
   /**
-   * 获取业务对象列表
-   * @returns ObjectMeta[]
+   * 获取选项值集列表
+   * @returns ConstantGroup[]
    */
-  async getObjects() {
-    return this.request("GET", "/v1/data/objects");
+  async getConstantGroups() {
+    return this.request("GET", "/v1/data/constantgroups");
   }
   /**
-   * 获取业务对象描述
-   * @param metaName 业务对象api名称
-   * @returns ObjectMetaDetail
+   * 获取选项值集选项列表
+   * @param groupName 选项值集名称
+   * @returns ConstantOption[]
    */
-  async getObjectDescription(e) {
-    return this.request("GET", `/v1/data/objects/${e}/description`);
+  async getConstantOptions(e) {
+    return this.request("GET", `/v1/data/constantgroups/${e}/constants`);
+  }
+  /**
+   * 新增选项
+   * @param groupName 选项值集名称
+   * @param name 选项name
+   * @param label 选项标签
+   * @param parentName 上级选项name
+   * @returns ConstantOption
+   */
+  async createConstantOption(e, t, r, s) {
+    return this.request("POST", `/v1/data/constantgroups/${e}/constants`, {
+      name: t,
+      label: r,
+      parentName: s
+    });
+  }
+  /**
+   * 修改选项
+   * @param groupName 选项值集名称
+   * @param optionName 选项name
+   * @param label 选项标签
+   * @returns ConstantOption
+   */
+  async updateConstantOption(e, t, r) {
+    return this.request("PATCH", `/v1/data/constantgroups/${e}/constants/${t}`, {
+      label: r
+    });
   }
 }
 function i(a, e) {
@@ -144,7 +171,7 @@ class f {
   /**
    * 新增主子业务数据
    * 此方法适用于同时写入带有少量子数据的单据，如果具有较多子明细数据，请按标准新建方法，主和子分别写入
-   * @param apiName 主对象api名称
+   * @param metaName 主对象api名称
    * @param request 主子业务数据请求参数
    * @returns 主数据和子数据的id信息
    */
@@ -273,6 +300,175 @@ class T {
     return this.authService.request(e, t, r);
   }
   /**
+   * 获取组织对象描述
+   * @returns 组织对象描述信息
+   */
+  async getDeptDescription() {
+    return this.request("GET", "/v1/data/app/orgconfig/objects/Org/description");
+  }
+  /**
+   * 新建组织
+   * @param deptData 组织数据
+   * @returns 组织code
+   */
+  async createDept(e) {
+    return this.request("POST", "/v1/data/app/orgconfig/objects/Org", e);
+  }
+  /**
+   * 修改组织信息
+   * @param code 组织code
+   * @param deptData 组织数据
+   * @returns 组织code
+   */
+  async updateDept(e, t) {
+    return this.request("PATCH", `/v1/data/app/orgconfig/objects/Org/${e}`, t);
+  }
+  /**
+   * 获取组织详情
+   * @param code 组织code
+   * @returns 组织详情
+   */
+  async getDeptDetail(e) {
+    return this.request("GET", `/v1/data/app/orgconfig/objects/Org/${e}`);
+  }
+  /**
+   * 查询组织数据
+   * @param options 查询选项
+   * @returns 组织数据列表
+   */
+  async queryDepts(e) {
+    const t = i("Org", e, "/v1/data/app/orgconfig/objects");
+    return this.request("GET", t);
+  }
+  /**
+   * 使用SQL查询组织数据
+   * @param sql SQL查询语句
+   * @returns 组织数据列表
+   */
+  async queryDeptsBySQL(e) {
+    const r = `/v1/data/app/orgconfig/query?sql=${encodeURIComponent(e)}`;
+    return this.request("GET", r);
+  }
+  /**
+   * 停用部门
+   * @param code 部门code
+   * @param moveToDeptCode 迁移部门code
+   * @returns 部门code
+   */
+  async disableDept(e, t) {
+    return this.request("PATCH", `/v1/data/app/orgconfig/objects/Org/disableOrg/${e}`, {
+      moveToDeptCode: t
+    });
+  }
+  /**
+   * 启用部门
+   * @param code 部门code
+   * @returns 部门code
+   */
+  async enableDept(e) {
+    return this.request("PATCH", `/v1/data/app/orgconfig/objects/Org/enableOrg/${e}`);
+  }
+  /**
+   * 部门修改上级
+   * @param code 部门code
+   * @param dept 新上级部门code
+   * @returns 修改后的部门code数组
+   */
+  async changeDeptParent(e, t) {
+    return this.request("POST", `/v1/data/app/orgconfig/objects/Org/changeOrgDept/${e}`, {
+      dept: t
+    });
+  }
+}
+class b {
+  constructor(e) {
+    this.authService = e;
+  }
+  async request(e, t, r) {
+    return this.authService.request(e, t, r);
+  }
+  /**
+   * 获取业务对象列表
+   * @returns ObjectMeta[]
+   */
+  async getObjects() {
+    return this.request("GET", "/v1/data/objects");
+  }
+  /**
+   * 获取业务对象描述
+   * @param metaName 业务对象api名称
+   * @returns ObjectMetaDetail
+   */
+  async getObjectDescription(e) {
+    return this.request("GET", `/v1/data/objects/${e}/description`);
+  }
+}
+class $ {
+  constructor(e) {
+    this.authService = e;
+  }
+  async request(e, t, r) {
+    return this.authService.request(e, t, r);
+  }
+  /**
+   * 获取角色对象描述
+   * @returns 角色对象描述信息
+   */
+  async getRoleDescription() {
+    return this.request("GET", "/v1/data/app/roleconfig/objects/Role/description");
+  }
+  /**
+   * 新建角色
+   * @param roleData 角色数据
+   * @returns 角色code
+   */
+  async createRole(e) {
+    return this.request("POST", "/v1/data/app/roleconfig/objects/Role", e);
+  }
+  /**
+   * 修改角色信息
+   * @param code 角色code
+   * @param roleData 角色数据
+   * @returns 角色code
+   */
+  async updateRole(e, t) {
+    return this.request("PATCH", `/v1/data/app/roleconfig/objects/Role/${e}`, t);
+  }
+  /**
+   * 获取角色详情
+   * @param code 角色code
+   * @returns 角色详情
+   */
+  async getRoleDetail(e) {
+    return this.request("GET", `/v1/data/app/roleconfig/objects/Role/${e}`);
+  }
+  /**
+   * 查询角色数据
+   * @param options 查询选项
+   * @returns 角色数据列表
+   */
+  async queryRoles(e) {
+    const t = i("Role", e, "/v1/data/app/roleconfig/objects");
+    return this.request("GET", t);
+  }
+  /**
+   * 使用SQL查询角色数据
+   * @param sql SQL查询语句
+   * @returns 角色数据列表
+   */
+  async queryRolesBySQL(e) {
+    const r = `/v1/data/app/roleconfig/query?sql=${encodeURIComponent(e)}`;
+    return this.request("GET", r);
+  }
+}
+class O {
+  constructor(e) {
+    this.authService = e;
+  }
+  async request(e, t, r) {
+    return this.authService.request(e, t, r);
+  }
+  /**
    * 获取用户对象描述
    * @returns 用户对象描述信息
    */
@@ -386,207 +582,11 @@ class T {
     });
   }
 }
-class b {
-  constructor(e) {
-    this.authService = e;
-  }
-  async request(e, t, r) {
-    return this.authService.request(e, t, r);
-  }
-  /**
-   * 获取组织对象描述
-   * @returns 组织对象描述信息
-   */
-  async getDeptDescription() {
-    return this.request("GET", "/v1/data/app/orgconfig/objects/Org/description");
-  }
-  /**
-   * 新建组织
-   * @param deptData 组织数据
-   * @returns 组织code
-   */
-  async createDept(e) {
-    return this.request("POST", "/v1/data/app/orgconfig/objects/Org", e);
-  }
-  /**
-   * 修改组织信息
-   * @param code 组织code
-   * @param deptData 组织数据
-   * @returns 组织code
-   */
-  async updateDept(e, t) {
-    return this.request("PATCH", `/v1/data/app/orgconfig/objects/Org/${e}`, t);
-  }
-  /**
-   * 获取组织详情
-   * @param code 组织code
-   * @returns 组织详情
-   */
-  async getDeptDetail(e) {
-    return this.request("GET", `/v1/data/app/orgconfig/objects/Org/${e}`);
-  }
-  /**
-   * 查询组织数据
-   * @param options 查询选项
-   * @returns 组织数据列表
-   */
-  async queryDepts(e) {
-    const t = i("Org", e, "/v1/data/app/orgconfig/objects");
-    return this.request("GET", t);
-  }
-  /**
-   * 使用SQL查询组织数据
-   * @param sql SQL查询语句
-   * @returns 组织数据列表
-   */
-  async queryDeptsBySQL(e) {
-    const r = `/v1/data/app/orgconfig/query?sql=${encodeURIComponent(e)}`;
-    return this.request("GET", r);
-  }
-  /**
-   * 停用部门
-   * @param code 部门code
-   * @param moveToDeptCode 迁移部门code
-   * @returns 部门code
-   */
-  async disableDept(e, t) {
-    return this.request("PATCH", `/v1/data/app/orgconfig/objects/Org/disableOrg/${e}`, {
-      moveToDeptCode: t
-    });
-  }
-  /**
-   * 启用部门
-   * @param code 部门code
-   * @returns 部门code
-   */
-  async enableDept(e) {
-    return this.request("PATCH", `/v1/data/app/orgconfig/objects/Org/enableOrg/${e}`);
-  }
-  /**
-   * 部门修改上级
-   * @param code 部门code
-   * @param dept 新上级部门code
-   * @returns 修改后的部门code数组
-   */
-  async changeDeptParent(e, t) {
-    return this.request("POST", `/v1/data/app/orgconfig/objects/Org/changeOrgDept/${e}`, {
-      dept: t
-    });
-  }
-}
-class $ {
-  constructor(e) {
-    this.authService = e;
-  }
-  async request(e, t, r) {
-    return this.authService.request(e, t, r);
-  }
-  /**
-   * 获取角色对象描述
-   * @returns 角色对象描述信息
-   */
-  async getRoleDescription() {
-    return this.request("GET", "/v1/data/app/roleconfig/objects/Role/description");
-  }
-  /**
-   * 新建角色
-   * @param roleData 角色数据
-   * @returns 角色code
-   */
-  async createRole(e) {
-    return this.request("POST", "/v1/data/app/roleconfig/objects/Role", e);
-  }
-  /**
-   * 修改角色信息
-   * @param code 角色code
-   * @param roleData 角色数据
-   * @returns 角色code
-   */
-  async updateRole(e, t) {
-    return this.request("PATCH", `/v1/data/app/roleconfig/objects/Role/${e}`, t);
-  }
-  /**
-   * 获取角色详情
-   * @param code 角色code
-   * @returns 角色详情
-   */
-  async getRoleDetail(e) {
-    return this.request("GET", `/v1/data/app/roleconfig/objects/Role/${e}`);
-  }
-  /**
-   * 查询角色数据
-   * @param options 查询选项
-   * @returns 角色数据列表
-   */
-  async queryRoles(e) {
-    const t = i("Role", e, "/v1/data/app/roleconfig/objects");
-    return this.request("GET", t);
-  }
-  /**
-   * 使用SQL查询角色数据
-   * @param sql SQL查询语句
-   * @returns 角色数据列表
-   */
-  async queryRolesBySQL(e) {
-    const r = `/v1/data/app/roleconfig/query?sql=${encodeURIComponent(e)}`;
-    return this.request("GET", r);
-  }
-}
-class O {
-  constructor(e) {
-    this.authService = e;
-  }
-  async request(e, t, r) {
-    return this.authService.request(e, t, r);
-  }
-  /**
-   * 获取选项值集列表
-   * @returns ConstantGroup[]
-   */
-  async getConstantGroups() {
-    return this.request("GET", "/v1/data/constantgroups");
-  }
-  /**
-   * 获取选项值集选项列表
-   * @param groupName 选项值集名称
-   * @returns ConstantOption[]
-   */
-  async getConstantOptions(e) {
-    return this.request("GET", `/v1/data/constantgroups/${e}/constants`);
-  }
-  /**
-   * 新增选项
-   * @param groupName 选项值集名称
-   * @param name 选项name
-   * @param label 选项标签
-   * @param parentName 上级选项name
-   * @returns ConstantOption
-   */
-  async createConstantOption(e, t, r, s) {
-    return this.request("POST", `/v1/data/constantgroups/${e}/constants`, {
-      name: t,
-      label: r,
-      parentName: s
-    });
-  }
-  /**
-   * 修改选项
-   * @param groupName 选项值集名称
-   * @param optionName 选项name
-   * @param label 选项标签
-   * @returns ConstantOption
-   */
-  async updateConstantOption(e, t, r) {
-    return this.request("PATCH", `/v1/data/constantgroups/${e}/constants/${t}`, {
-      label: r
-    });
-  }
-}
-class m {
+class R {
   constructor(e) {
     this.config = {
       pageSize: 10
-    }, this.authService = new q(e), this.objectService = new D(this.authService), this.dataService = new f(this.authService), this.userService = new T(this.authService), this.deptService = new b(this.authService), this.roleService = new $(this.authService), this.constantGroupService = new O(this.authService);
+    }, this.authService = new q(e), this.objectService = new b(this.authService), this.dataService = new f(this.authService), this.userService = new O(this.authService), this.deptService = new T(this.authService), this.roleService = new $(this.authService), this.constantGroupService = new D(this.authService);
   }
   /**
    * 获取业务对象列表
@@ -604,13 +604,29 @@ class m {
     return this.objectService.getObjectDescription(e);
   }
   /**
-   * 获取业务类型
+   * 创建业务数据
    * @param metaName 业务对象api名称
    * @param data 业务数据，字段apiName: value 格式 {fieldName: 'fieldValue'}
    * @returns 创建的业务数据code
    */
   async createData(e, t) {
     return this.dataService.createData(e, t);
+  }
+  /**
+   * 创建主子业务数据
+   * 此方法适用于同时写入带有少量子数据的单据，如果具有较多子明细数据，请按标准新建方法，主和子分别写入
+   * @param metaName 主业务对象api名称
+   * @param data 主业务数据
+   * @param related 标准子明细数据
+   * @param treeRelated 树形子明细数据
+   * @returns 
+   */
+  async createDataWithRelated(e, t, r, s) {
+    return this.dataService.createDataWithRelated(e, {
+      data: t,
+      related: r,
+      treeRelated: s
+    });
   }
   /**
    * 更新业务数据
@@ -848,5 +864,5 @@ export {
   S as BizHecomError,
   p as HecomError,
   v as NetHecomError,
-  m as default
+  R as default
 };
