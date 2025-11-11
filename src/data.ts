@@ -54,12 +54,12 @@ export class DataService {
     /**
      * 新增主子业务数据
      * 此方法适用于同时写入带有少量子数据的单据，如果具有较多子明细数据，请按标准新建方法，主和子分别写入
-     * @param apiName 主对象api名称
+     * @param metaName 主对象api名称
      * @param request 主子业务数据请求参数
      * @returns 主数据和子数据的id信息
      */
     public async createDataWithRelated(
-        apiName: string,
+        metaName: string,
         request: DataWithRelatedRequest
     ): Promise<DataWithRelatedResponse> {
         // 计算关联子数据数量
@@ -76,7 +76,7 @@ export class DataService {
             );
         }
 
-        return this.request('POST', `/oapi/v1/data/objects-with-related/${apiName}`, request);
+        return this.request('POST', `/oapi/v1/data/objects-with-related/${metaName}`, request);
     }
 
     /**

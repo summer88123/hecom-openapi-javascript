@@ -1,21 +1,23 @@
+import { AuthService } from './auth';
+import { ConstantGroupService } from './constantgroup';
+import { DataService } from './data';
+import { DeptService } from './dept';
+import { BizHecomError, HecomError, NetHecomError } from './error';
+import { ObjectService } from './object';
+import { RoleService } from './role';
 import {
     BizRecord,
     Config,
+    ConstantGroup,
+    ConstantOption,
     ObjectMeta,
     ObjectMetaDetail,
     QueryOptions,
     QueryResult,
-    ConstantGroup,
-    ConstantOption,
+    RelatedData,
+    TreeRelatedData,
 } from './types';
-import { HecomError, NetHecomError, BizHecomError } from './error';
-import { AuthService } from './auth';
-import { ObjectService } from './object';
-import { DataService } from './data';
 import { UserService } from './user';
-import { DeptService } from './dept';
-import { RoleService } from './role';
-import { ConstantGroupService } from './constantgroup';
 
 export default class HClient {
     private authService: AuthService;
@@ -58,13 +60,35 @@ export default class HClient {
     }
 
     /**
-     * 获取业务类型
+     * 创建业务数据
      * @param metaName 业务对象api名称
      * @param data 业务数据，字段apiName: value 格式 {fieldName: 'fieldValue'}
      * @returns 创建的业务数据code
      */
     public async createData(metaName: string, data: Partial<BizRecord>): Promise<string> {
         return this.dataService.createData(metaName, data);
+    }
+
+    /**
+     * 创建主子业务数据
+     * 此方法适用于同时写入带有少量子数据的单据，如果具有较多子明细数据，请按标准新建方法，主和子分别写入
+     * @param metaName 主业务对象api名称
+     * @param data 主业务数据
+     * @param related 标准子明细数据
+     * @param treeRelated 树形子明细数据
+     * @returns 
+     */
+    public async createDataWithRelated(
+        metaName: string,
+        data: Partial<BizRecord>,
+        related?: RelatedData,
+        treeRelated?: TreeRelatedData
+    ): Promise<ReturnType<DataService['createDataWithRelated']>> {
+        return this.dataService.createDataWithRelated(metaName, {
+            data,
+            related,
+            treeRelated,
+        });
     }
 
     /**
@@ -336,4 +360,4 @@ export default class HClient {
     }
 }
 export * from './types';
-export { HecomError, NetHecomError, BizHecomError };
+export { BizHecomError, HecomError, NetHecomError };
