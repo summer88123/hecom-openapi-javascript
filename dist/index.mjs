@@ -179,7 +179,7 @@ class f {
     const r = t.related ? t.related.data.length : 0, s = t.treeRelated ? this.countTreeRecords(t.treeRelated.data) : 0, n = r + s;
     if (n > 29)
       throw new Error(`关联子对象数据总数最多29条（主+子限制30条），当前关联子对象${r}条，树形子对象${s}条，总计${n}条`);
-    return this.request("POST", `/oapi/v1/data/objects-with-related/${e}`, t);
+    return this.request("POST", `/v1/data/objects-with-related/${e}`, t);
   }
   /**
    * 更新业务数据
@@ -619,7 +619,7 @@ class R {
    * @param data 主业务数据
    * @param related 标准子明细数据
    * @param treeRelated 树形子明细数据
-   * @returns 
+   * @returns
    */
   async createDataWithRelated(e, t, r, s) {
     return this.dataService.createDataWithRelated(e, {

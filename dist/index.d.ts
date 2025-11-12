@@ -1,16 +1,3 @@
-declare class AuthService {
-    private authConfig;
-    private accessToken?;
-    private refreshToken;
-    private expiresIn;
-    private endPoint?;
-    constructor(config: Config);
-    private verifyConfig;
-    private getAccessToken;
-    private getEndPoint;
-    request<R, P = void>(method: string, url: string, param?: P): Promise<R>;
-}
-
 export declare class BizHecomError extends HecomError {
     code: string;
     data?: any;
@@ -56,100 +43,6 @@ export declare interface ConstantOption extends SysRecord {
     groupName: string;
     label: string;
     pinyin: string;
-}
-
-declare class DataService {
-    private authService;
-    constructor(authService: AuthService);
-    private request;
-    /**
-     * 递归计算树形数据的总数量
-     * @param items 树形数据项数组
-     * @returns 树形数据总数量
-     */
-    private countTreeRecords;
-    /**
-     * 创建业务数据
-     * @param metaName 业务对象api名称
-     * @param data 业务数据，字段apiName: value 格式 {fieldName: 'fieldValue'}
-     * @returns 创建的业务数据code
-     */
-    createData(metaName: string, data: Partial<BizRecord>): Promise<string>;
-    /**
-     * 新增主子业务数据
-     * 此方法适用于同时写入带有少量子数据的单据，如果具有较多子明细数据，请按标准新建方法，主和子分别写入
-     * @param metaName 主对象api名称
-     * @param request 主子业务数据请求参数
-     * @returns 主数据和子数据的id信息
-     */
-    createDataWithRelated(metaName: string, request: DataWithRelatedRequest): Promise<DataWithRelatedResponse>;
-    /**
-     * 更新业务数据
-     * @param metaName 业务对象api名称
-     * @param code 业务数据code
-     * @param data 字段数据 {fieldName: 'fieldValue'}
-     * @returns 更新的业务数据code
-     * @throws Error 更新业务数据失败
-     */
-    updateData(metaName: string, code: string, data: BizRecord): Promise<string>;
-    /**
-     * 批量新增业务数据
-     * @param metaName 业务对象api名称
-     * @param records 业务数据数组，最多30条
-     * @returns 创建的业务数据code数组
-     */
-    batchCreateData(metaName: string, records: BizRecord[]): Promise<string[]>;
-    /**
-     * 删除业务数据
-     * @param metaName 业务对象api名称
-     * @param code 业务数据code
-     * @returns 删除的业务数据code
-     */
-    deleteData(metaName: string, code: string): Promise<string>;
-    /**
-     * 批量更新业务数据
-     * @param metaName 业务对象api名称
-     * @param records 业务数据数组，最多30条，每条必须包含code字段
-     * @returns 更新的业务数据code数组
-     */
-    batchUpdateData(metaName: string, records: BizRecord[]): Promise<string[]>;
-    /**
-     * 获取业务数据
-     * @param metaName 业务对象api名称
-     * @param code 业务数据code
-     * @returns 业务数据
-     */
-    getData(metaName: string, code: string): Promise<BizRecord>;
-    /**
-     * 查询业务数据
-     * @param metaName 业务对象api名称
-     * @param options 查询选项
-     * @returns 业务数据列表
-     */
-    queryData(metaName: string, options: QueryOptions): Promise<QueryResult>;
-    /**
-     * 查询业务数据
-     * @param sql 查询语句，支持where、order by、limit、offset等
-     * @returns 业务数据列表
-     */
-    queryDataBySQL(sql: string): Promise<QueryResult>;
-    /**
-     * 查询辅助或内置对象业务数据
-     * @param metaName 业务对象api名称
-     * @param options 查询选项
-     * @returns 业务数据列表
-     */
-    queryAuxiliaryData(metaName: string, options: QueryOptions): Promise<QueryResult>;
-    /**
-     * 业务数据转移负责人
-     * @param metaName 业务对象的metaName
-     * @param code 数据code
-     * @param newOwner 新负责人code
-     * @param addTeam 是否添加当前负责人为跟进人 (0 否 1 是)
-     * @param deptFollowNewOwner 所属部门是否和新负责人保持一致 (0 否 1 是)
-     * @returns 转移后的业务数据code
-     */
-    transferOwner(metaName: string, code: string, newOwner: string, addTeam: boolean, deptFollowNewOwner: boolean): Promise<string>;
 }
 
 /** 主子业务数据请求 */
@@ -247,7 +140,7 @@ declare class HClient {
      * @param treeRelated 树形子明细数据
      * @returns
      */
-    createDataWithRelated(metaName: string, data: Partial<BizRecord>, related?: RelatedData, treeRelated?: TreeRelatedData): Promise<ReturnType<DataService['createDataWithRelated']>>;
+    createDataWithRelated(metaName: string, data: Partial<BizRecord>, related?: RelatedData, treeRelated?: TreeRelatedData): Promise<DataWithRelatedResponse>;
     /**
      * 更新业务数据
      * @param metaName 业务对象api名称
@@ -480,7 +373,7 @@ export declare interface RelatedData {
     /** 主对象在子对象中所占用的字段的名称 */
     refFieldName: string;
     /** 子对象数据列表，最多29条(主+子限制30条) */
-    data: BizRecord[];
+    data: Partial<BizRecord>[];
 }
 
 declare interface Response_2<D> {
@@ -509,7 +402,7 @@ export declare interface SysRecord {
 /** 树形子对象单条记录 */
 export declare interface TreeRecord {
     /** 单条树形数据 */
-    record: BizRecord & {
+    record: Partial<BizRecord> & {
         /** 每个层级下的序号（1、2、3） */
         sequence: number;
         /** 层级（1、2、3 ......） */
