@@ -76,7 +76,7 @@ export class DataService {
             );
         }
 
-        return this.request('POST', `/oapi/v1/data/objects-with-related/${metaName}`, request);
+        return this.request('POST', `/v1/data/objects-with-related/${metaName}`, request);
     }
 
     /**

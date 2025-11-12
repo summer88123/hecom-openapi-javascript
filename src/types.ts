@@ -133,7 +133,7 @@ export interface ConstantOption extends SysRecord {
 /** 树形子对象单条记录 */
 export interface TreeRecord {
     /** 单条树形数据 */
-    record: BizRecord & {
+    record: Partial<BizRecord> & {
         /** 每个层级下的序号（1、2、3） */
         sequence: number;
         /** 层级（1、2、3 ......） */
@@ -156,7 +156,7 @@ export interface RelatedData {
     /** 主对象在子对象中所占用的字段的名称 */
     refFieldName: string;
     /** 子对象数据列表，最多29条(主+子限制30条) */
-    data: BizRecord[];
+    data: Partial<BizRecord>[];
 }
 
 /** 关联的树形子对象数据 */

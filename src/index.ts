@@ -10,6 +10,7 @@ import {
     Config,
     ConstantGroup,
     ConstantOption,
+    DataWithRelatedResponse,
     ObjectMeta,
     ObjectMetaDetail,
     QueryOptions,
@@ -76,14 +77,14 @@ export default class HClient {
      * @param data 主业务数据
      * @param related 标准子明细数据
      * @param treeRelated 树形子明细数据
-     * @returns 
+     * @returns
      */
     public async createDataWithRelated(
         metaName: string,
         data: Partial<BizRecord>,
         related?: RelatedData,
         treeRelated?: TreeRelatedData
-    ): Promise<ReturnType<DataService['createDataWithRelated']>> {
+    ): Promise<DataWithRelatedResponse> {
         return this.dataService.createDataWithRelated(metaName, {
             data,
             related,
